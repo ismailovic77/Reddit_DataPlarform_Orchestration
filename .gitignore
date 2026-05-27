@@ -1,0 +1,18 @@
+cat > .gitignore << 'EOF'
+# Airflow
+logs/
+*.pyc
+__pycache__/
+
+# Environment
+.env
+
+# macOS
+.DS_Store
+
+# Docker
+*.log
+EOF
+
+metastore_db/
+spark_warehouse/
