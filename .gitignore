@@ -16,3 +16,5 @@ EOF
 
 metastore_db/
 spark_warehouse/
+
+fernet_key.py
