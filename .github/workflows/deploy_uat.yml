@@ -1,0 +1,33 @@
+# UAT_BASE_PATH , is referenced on github project in variable and secrets
+
+name: Deploy to UAT
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy dags to UAT
+        run: |
+          rsync -av --delete dags/ ${{ vars.UAT_BASE_PATH }}/airflow_artifacts/dags/
+
+      - name: Copy config to UAT
+        run: |
+          rsync -av --delete config/ ${{ vars.UAT_BASE_PATH }}/airflow_artifacts/config/
+
+      - name: Copy plugins to UAT
+        run: |
+          rsync -av --delete plugins/ ${{ vars.UAT_BASE_PATH }}/airflow_artifacts/plugins/
+
+      - name: Copy docker-compose to UAT
+        run: |
+          mkdir -p ${{ vars.UAT_BASE_PATH }}/infra/
+          cp docker-compose-uat.yml ${{ vars.UAT_BASE_PATH }}/infra/
