@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from airflow import DAG
-#from airflow.operators.bash import BashOperator
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
 from cosmos.profiles import SparkThriftProfileMapping
