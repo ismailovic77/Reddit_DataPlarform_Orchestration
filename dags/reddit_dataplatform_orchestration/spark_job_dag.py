@@ -42,18 +42,18 @@ with DAG(
 
     submit_spark_job = SparkSubmitOperator(
         task_id='submit_spark_job',
-        application='/opt/pyspark_jobs/gold/gold_sample.py',
+        application='/opt/pyspark_jobs/reddit_dataplateform_processing/gold/gold_sample.py',
         conn_id='spark_default',
         name='airflow_spark_job',
         verbose=True,
-        py_files='/opt/pyspark_jobs/reddit_etl-0.1.0-py3-none-any.whl',
+        py_files='/opt/pyspark_jobs/reddit_dataplatform_processing-0.1.0-py3-none-any.whl',
         conf={
             'spark.master': 'spark://host.docker.internal:7077',
-            'spark.driver.host': '192.168.1.6',
+            'spark.driver.host': '192.168.1.125',
             'spark.driver.bindAddress': '0.0.0.0',
             'spark.driver.port': '4041',
-            'spark.driver.blockManager.port': '19042',
-            'spark.pyspark.python': '/Users/user/Desktop/learning/reddit_etl/.venv/bin/python',
+            'spark.driver.blockManager.port': '19041',
+            'spark.pyspark.python': '/Users/user/Desktop/learning/Reddit_DataPlatform_Processing/.venv/bin/python',
             'spark.pyspark.driver.python': 'python3',
             'spark.driver.memory': '1g',
             'spark.executor.memory': '1g',
@@ -85,5 +85,4 @@ with DAG(
     
     
 
-    submit_spark_job >> dbt_task_group# this is a comment
-#this is a comment from airflow user 
+    submit_spark_job >> dbt_task_group
