@@ -31,8 +31,8 @@ start_worker(){
 start_thrift_server(){
   $SPARK_HOME/sbin/start-thriftserver.sh \
     --master spark://$SPARK_MASTER_HOST:$SPARK_MASTER_PORT\
-    --hiveconf hive.server2.thrift.port=$HIVE_SERVER2_THRIFT_PORT \
-    --hiveconf hive.server2.thrift.bind.host=$HIVE_SERVER2_THRIFT_BIND_HOST \
+    --hiveconf hive.server2.thrift.port=$SPARK_THRIFT_PORT \
+    --hiveconf hive.server2.thrift.bind.host=$SPARK_THRIFT_BIND_HOST \
     --executor-memory 2G \
     --total-executor-cores 2 \
     --conf spark.sql.warehouse.dir=s3a://warehouse \

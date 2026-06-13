@@ -13,6 +13,10 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth'
     AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_FERNET_KEY}
+    SPARK_THRIFT_PORT: ${SPARK_THRIFT_PORT}
+    SPARK_THRIFT_SCHEMA: ${SPARK_THRIFT_SCHEMA}
+    SPARK_THRIFT_THREADS: ${SPARK_THRIFT_THREADS}
+    SPARK_THRIFT_DOCKER_HOST: ${SPARK_THRIFT_DOCKER_HOST}
     JAVA_HOME: /usr/lib/jvm/java-17-openjdk-arm64
     SPARK_HOME: /opt/spark
     #PATH: /opt/spark/bin:/usr/lib/jvm/java-17-openjdk-arm64/bin:/usr/local/bin:/usr/bin:/bin
@@ -21,6 +25,7 @@ x-airflow-common: &airflow-common
     - ${AIRFLOW_ARTIFACTS_PATH}/dags/:/opt/airflow/dags
     - ${AIRFLOW_ARTIFACTS_PATH}/logs:/opt/airflow/logs
     - ${AIRFLOW_ARTIFACTS_PATH}/plugins:/opt/airflow/plugins
+    - ${AIRFLOW_ARTIFACTS_PATH}/connections:/opt/airflow/connections
     - ${SPARK_JOBS_PATH}:/opt/pyspark_jobs
     - ${SPARK_WHEEL_PATH}/reddit_dataplatform_processing-0.1.0-py3-none-any.whl:/opt/pyspark_jobs/reddit_dataplatform_processing-0.1.0-py3-none-any.whl
     - ${DBT_PROJECT_PATH}:/opt/dbt_project

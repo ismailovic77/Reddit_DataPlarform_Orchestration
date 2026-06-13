@@ -17,16 +17,13 @@ default_args = {
 }
 
 profile_config = ProfileConfig(
-    profile_name='dbt_analysis',
+    profile_name='reddit_dataplatform',
     target_name='dev',
     profile_mapping=SparkThriftProfileMapping(
         conn_id='spark_thrift_default',
         profile_args={
-            'schema': 'default',
-            'host': 'host.docker.internal',
-            'port': 10000,
-            'threads': 2,
-        },
+            'schema':'default'
+        }
     ),
 )
 
@@ -85,4 +82,5 @@ with DAG(
     
     
 
-    submit_spark_job >> dbt_task_group
+    #submit_spark_job >> dbt_task_group
+    dbt_task_group
