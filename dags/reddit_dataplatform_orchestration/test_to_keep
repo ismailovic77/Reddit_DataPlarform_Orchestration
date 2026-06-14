@@ -1,0 +1,24 @@
+${HOST_IP}
+PYSPARK_PYTHON_PATH=/Users/user/Desktop/learning/Reddit_DataPlatform_Processing/.venv/bin/python
+
+REmove : 
+SPARK_THRIFT_DOCKER_HOST=host.docker.internal
+
+
+conf={
+            'spark.master': 'spark://host.docker.internal:7077',
+            'spark.driver.host': '192.168.1.125',
+            'spark.driver.bindAddress': '0.0.0.0',
+            'spark.driver.port': '4041',
+            'spark.driver.blockManager.port': '19041',
+            'spark.pyspark.python': '/Users/user/Desktop/learning/Reddit_DataPlatform_Processing/.venv/bin/python',
+            'spark.pyspark.driver.python': 'python3',
+            'spark.driver.memory': '1g',
+            'spark.executor.memory': '1g',
+            'spark.executor.cores': '1',
+            'spark.hadoop.fs.s3a.endpoint': 'http://host.docker.internal:9000',
+            'spark.hadoop.fs.s3a.access.key': 'minioadmin',
+            'spark.hadoop.fs.s3a.secret.key': 'minioadmin',
+            'spark.hadoop.fs.s3a.path.style.access': 'true',
+            'spark.hadoop.fs.s3a.impl': 'org.apache.hadoop.fs.s3a.S3AFileSystem',
+        },

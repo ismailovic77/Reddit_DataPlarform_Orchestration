@@ -21,7 +21,7 @@ start_master(){
 
 start_worker(){
   $SPARK_HOME/sbin/start-worker.sh spark://$SPARK_MASTER_HOST:$SPARK_MASTER_PORT \
-    --host $SPARK_WORKER_HOST \
+    --host $SPARK_MASTER_HOST \
     --port $SPARK_WORKER_PORT \
     --webui-port $SPARK_WORKER_WEBUI_PORT \
     --cores 8 \
@@ -32,15 +32,15 @@ start_thrift_server(){
   $SPARK_HOME/sbin/start-thriftserver.sh \
     --master spark://$SPARK_MASTER_HOST:$SPARK_MASTER_PORT\
     --hiveconf hive.server2.thrift.port=$SPARK_THRIFT_PORT \
-    --hiveconf hive.server2.thrift.bind.host=$SPARK_THRIFT_BIND_HOST \
+    --hiveconf hive.server2.thrift.bind.host=$SPARK_MASTER_HOST \
     --executor-memory 2G \
     --total-executor-cores 2 \
     --conf spark.sql.warehouse.dir=s3a://warehouse \
     --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension \
     --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog \
     --conf spark.hadoop.fs.s3a.endpoint=http://localhost:$MINIO_S3_API_PORT \
-    --conf spark.hadoop.fs.s3a.access.key=minioadmin \
-    --conf spark.hadoop.fs.s3a.secret.key=minioadmin \
+    --conf spark.hadoop.fs.s3a.access.key=$MINIO_ROOT_USER \
+    --conf spark.hadoop.fs.s3a.secret.key=$MINIO_ROOT_PASSWORD \
     --conf spark.hadoop.fs.s3a.path.style.access=true \
     --conf spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem 
     

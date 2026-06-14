@@ -1,22 +1,21 @@
 ifdef ENV
-	include ./envs/.env.$(ENV)
+	include .env.$(ENV)
 	export
 endif
 
 # start targets
 .PHONY: start-spark start-infra start-all first-start
+start-spark:                                 
+	./scripts/start_spark_cluster.sh                
 
-start-spark:                                 # target name
-	./scripts/start_spark_cluster.sh                 # command to run (TAB indented)
-
-start-infra:                                 # another target
-	./scripts/start_infra_docker.sh 
+start-docker-infra:                                 
+	docker compose --env-file .env.$(ENV) up -d airflow-webserver airflow-scheduler minio
 
 first-start:
-	docker compose up -d postgres 
-	docker compose run --rm airflow-init
+	docker compose --env-file .env.$(ENV) up -d postgres
+	docker compose --env-file .env.$(ENV) run --rm airflow-init
 
-start-all: start-spark start-infra          # depends on both, runs them in order
+start-all: start-spark  start-docker-infra         # depends on both, runs them in order
 
 
 # stop targets  
@@ -24,10 +23,20 @@ start-all: start-spark start-infra          # depends on both, runs them in orde
 stop-spark:
 	./scripts/stop_spark_cluster.sh
 
-stop-infra:
-	./scripts/stop_infra_docker.sh
+stop-docker-infra:
+	docker compose --env-file .env.$(ENV) down
 
-stop-all: stop-infra stop-spark
+stop-all: stop-docker-infra stop-spark
 
-# utility targets
-.PHONY: lint test clean
+#airflow command
+.PHONY: add-connections
+add-connections:
+	envsubst < $(AIRFLOW_HOME)/connections/connections.yaml > $(AIRFLOW_HOME)/connections/connections_resolved.yaml
+	airflow connections import --overwrite $(AIRFLOW_HOME)/connections/connections_resolved.yaml
+
+#docker commands
+.PHONY:
+compose-build:
+	docker compose build
+
+	

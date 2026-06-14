@@ -1,0 +1,30 @@
+# connections/connections.yaml
+
+spark_thrift_default:
+  conn_type: spark
+  description: "Spark Thrift Server connection for dbt/Cosmos"
+  host: host.docker.internal
+  port: 10000
+  extra:
+    schema: default
+    threads: 2
+    auth: NONE
+    kind: thrift
+
+spark_default:
+  conn_type: spark
+  description: "Spark connection for SparkSubmitOperator"
+  host: host.docker.internal
+  port: 7077
+  extra:
+    spark.driver.host: 192.168.1.125
+    spark.driver.bindAddress: '0.0.0.0'
+    spark.driver.port: 4041
+    spark.driver.blockManager.port: 19041
+    spark.pyspark.python: /Users/user/Desktop/learning/Reddit_DataPlatform_Processing/.venv/bin/python
+    spark.pyspark.driver.python: python3
+    spark.hadoop.fs.s3a.endpoint: http://host.docker.internal:9000
+    spark.hadoop.fs.s3a.access.key: minioadmin
+    spark.hadoop.fs.s3a.secret.key: minioadmin
+    spark.hadoop.fs.s3a.path.style.access: "true"
+    spark.hadoop.fs.s3a.impl: org.apache.hadoop.fs.s3a.S3AFileSystem

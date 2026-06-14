@@ -9,6 +9,8 @@ RUN apt-get update && \
         curl \
         procps \
         git \
+        gettext-base\
+        make \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

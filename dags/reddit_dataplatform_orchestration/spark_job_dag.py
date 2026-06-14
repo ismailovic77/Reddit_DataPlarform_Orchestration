@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from pathlib import Path
-
+from airflow.hooks.base import BaseHook
 from airflow import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
@@ -27,6 +27,9 @@ profile_config = ProfileConfig(
     ),
 )
 
+conn = BaseHook.get_connection('spark_default')
+extra = conn.extra_dejson
+
 with DAG(
     dag_id='spark_dbt_pipeline',
     default_args=default_args,
@@ -39,35 +42,32 @@ with DAG(
 
     submit_spark_job = SparkSubmitOperator(
         task_id='submit_spark_job',
-        application='/opt/pyspark_jobs/reddit_dataplateform_processing/gold/gold_sample.py',
+        application='/opt/pyspark/jobs/reddit_dataplatform_pyspark/gold/gold_sample.py',
         conn_id='spark_default',
         name='airflow_spark_job',
         verbose=True,
-        py_files='/opt/pyspark_jobs/reddit_dataplatform_processing-0.1.0-py3-none-any.whl',
+        py_files='/opt/pyspark/wheel/reddit_dataplatform_processing-0.1.0-py3-none-any.whl',
         conf={
-            'spark.master': 'spark://host.docker.internal:7077',
-            'spark.driver.host': '192.168.1.125',
-            'spark.driver.bindAddress': '0.0.0.0',
-            'spark.driver.port': '4041',
-            'spark.driver.blockManager.port': '19041',
-            'spark.pyspark.python': '/Users/user/Desktop/learning/Reddit_DataPlatform_Processing/.venv/bin/python',
-            'spark.pyspark.driver.python': 'python3',
-            'spark.driver.memory': '1g',
-            'spark.executor.memory': '1g',
-            'spark.executor.cores': '1',
-            'spark.hadoop.fs.s3a.endpoint': 'http://host.docker.internal:9000',
-            'spark.hadoop.fs.s3a.access.key': 'minioadmin',
-            'spark.hadoop.fs.s3a.secret.key': 'minioadmin',
-            'spark.hadoop.fs.s3a.path.style.access': 'true',
-            'spark.hadoop.fs.s3a.impl': 'org.apache.hadoop.fs.s3a.S3AFileSystem',
+            # driver networking
+            'spark.driver.host':extra.get('spark.driver.host'),
+            'spark.driver.bindAddress':extra.get('spark.driver.bindAddress'),
+            'spark.driver.port':extra.get('spark.driver.port'),
+            'spark.driver.blockManager.port':extra.get('spark.driver.blockManager.port'),
+            # python
+            'spark.pyspark.python':extra.get('spark.pyspark.python'),
+            'spark.pyspark.driver.python':extra.get('spark.pyspark.driver.python'),
+            # s3
+            'spark.hadoop.fs.s3a.endpoint':extra.get('spark.hadoop.fs.s3a.endpoint'),
+            'spark.hadoop.fs.s3a.access.key':extra.get('spark.hadoop.fs.s3a.access.key'),
+            'spark.hadoop.fs.s3a.secret.key':extra.get('spark.hadoop.fs.s3a.secret.key'),
+            'spark.hadoop.fs.s3a.path.style.access':extra.get('spark.hadoop.fs.s3a.path.style.access'),
+            'spark.hadoop.fs.s3a.impl':extra.get('spark.hadoop.fs.s3a.impl'),
+            # resources (job-specific)
+            'spark.driver.memory':'1g',
+            'spark.executor.memory':'1g',
+            'spark.executor.cores':'1',
         },
     )
-
-    
-    #dbt_run = BashOperator(
-    #    task_id='run_dbt',
-    #    bash_command='dbt run --project-dir /opt/dbt_project --profiles-dir /opt/airflow/.dbt',
-    #)
 
     dbt_task_group = DbtTaskGroup(
         group_id='dbt_transformations',
@@ -82,5 +82,4 @@ with DAG(
     
     
 
-    #submit_spark_job >> dbt_task_group
-    dbt_task_group
+    submit_spark_job >> dbt_task_group
